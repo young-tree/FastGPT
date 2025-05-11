@@ -23,7 +23,8 @@ Encrypt Key 用于加密飞书服务器与 FastGPT 之间通信。 建议如果�
 调试完成后，点击发布。
 5. 发布应用 link机器人发布后，还需要在版本管理与发布页面发布应用版本。
 点击创建新版本后，设置版本号和版本描述后点击保存发布即可。
-应用发布后，即可在钉钉企业中使用机器人功能，可对机器人私聊。或者在群组添加机器人后@机器人，触发对话。</description></item><item><title>接入微信公众号教程</title><link>https://doc.tryfastgpt.ai/docs/use-cases/external-integration/official_account/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/use-cases/external-integration/official_account/</guid><description>从 4.8.10 版本起，FastGPT 商业版支持直接接入微信公众号，无需额外的 API。
+应用发布后，即可在钉钉企业中使用机器人功能，可对机器人私聊。或者在群组添加机器人后@机器人，触发对话。
+FAQ link如何新开一个聊天记录 link如果你想重置你的聊天记录，可以给机器人发送 Reset 消息（注意大小写），机器人会新开一个聊天记录。</description></item><item><title>接入微信公众号教程</title><link>https://doc.tryfastgpt.ai/docs/use-cases/external-integration/official_account/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/use-cases/external-integration/official_account/</guid><description>从 4.8.10 版本起，FastGPT 商业版支持直接接入微信公众号，无需额外的 API。
 注意⚠️: 目前只支持通过验证的公众号（服务号和订阅号都可以）
 1. 在 FastGPT 新建发布渠道 link在 FastGPT 中选择想要接入的应用，在 发布渠道 页面，新建一个接入微信公众号的发布渠道，填写好基础信息。
 2. 获取 AppID 、 Secret和Token link1. 登录微信公众平台，选择您的公众号。 link打开微信公众号官网：https://mp.weixin.qq.com
