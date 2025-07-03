@@ -39,7 +39,7 @@ API 文件库能够让用户轻松对接已有的文档库，只需要按照 Fas
 你需要提供两个参数：
 baseURL: 文件服务接口的 baseURL authorization: 用于身份验证的请求头信息，实际请求格式为 Authorization: Bearer &amp;lt;token&amp;gt; 接口规范 link接口响应格式：
 type ResponseType = { success: boolean; message: string; data: any; } 数据类型：
-// 文件列表中，单项的文件类型 type FileListItem = { id: string; parentId: string | null; name: string; type: &amp;#39;file&amp;#39; | &amp;#39;folder&amp;#39;; updateTime: Date; createTime: Date; } 1.</description></item><item><title>飞书知识库</title><link>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/lark_dataset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/lark_dataset/</guid><description>FastGPT v4.8.16 版本开始，商业版用户支持飞书知识库导入，用户可以通过配置飞书应用的 appId 和 appSecret，并选中一个文档空间的顶层文件夹来导入飞书知识库。目前处于测试阶段，部分交互有待优化。
+// 文件列表中，单项的文件类型 type FileListItem = { id: string; parentId: string //也可能为 null 或者 undefined 类型; name: string; type: &amp;#39;file&amp;#39; | &amp;#39;folder&amp;#39;; updateTime: Date; createTime: Date; } 1.</description></item><item><title>飞书知识库</title><link>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/lark_dataset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/lark_dataset/</guid><description>FastGPT v4.8.16 版本开始，商业版用户支持飞书知识库导入，用户可以通过配置飞书应用的 appId 和 appSecret，并选中一个文档空间的顶层文件夹来导入飞书知识库。目前处于测试阶段，部分交互有待优化。
 由于飞书限制，无法直接获取所有文档内容，目前仅可以获取共享空间下文件目录的内容，无法获取个人空间和知识库里的内容。
 1. 创建飞书应用 link打开 飞书开放平台，点击创建应用，选择自建应用，然后填写应用名称。
 2. 配置应用权限 link创建应用后，进入应用可以配置相关权限，这里需要增加3个权限：
@@ -71,4 +71,21 @@ API 文件库替代方案 link4.8.15 提供了新的知识库类型 - API 文件
 通过对接口进行简单的调整，就能使用 API 文件库代替外部文件知识库的功能
 你可以直接将外部文件知识库中的外部预览地址，作为 API 文件库接口规范中获取文件阅读链接的接口返回
 然后再以相同的 baseURL 实现获取文件列表和获取单个文件内容这两个接口
-这样就能轻松地使用 API 文件库替代原有的外部文件知识库，更多详细的内容见 API 文件库的文档</description></item></channel></rss>
+这样就能轻松地使用 API 文件库替代原有的外部文件知识库，更多详细的内容见 API 文件库的文档</description></item><item><title>第三方知识库开发</title><link>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/third_dataset/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/third_dataset/</guid><description>目前，互联网上拥有各种各样的文档库，例如飞书，语雀等等。 FastGPT 的不同用户可能使用的文档库不同，目前 FastGPT 内置了飞书、语雀文档库，如果需要接入其他文档库，可以参考本节内容。
+统一的接口规范 link为了实现对不同文档库的统一接入，FastGPT 对第三方文档库进行了接口的规范，共包含 4 个接口内容，可以查看 API 文件库接口。
+所有内置的文档库，都是基于标准的 API 文件库进行扩展。可以参考FastGPT/packages/service/core/dataset/apiDataset/yuqueDataset/api.ts中的代码，进行其他文档库的扩展。一共需要完成 4 个接口开发：
+获取文件列表 获取文件内容/文件链接 获取原文预览地址 获取文件详情信息 开始一个第三方文件库 link为了方便讲解，这里以添加飞书知识库( FeishuKnowledgeDataset )为例。
+1. 添加第三方文档库参数 link首先，要进入 FastGPT 项目路径下的FastGPT\packages\global\core\dataset\apiDataset.d.ts文件，添加第三方文档库 Server 类型。知识库类型的字段由自己设计，主要是自己需要那些内容。例如，语雀知识库中，需要提供userId、token两个字段作为鉴权信息。
+export type YuqueServer = { userId: string; token?: string; basePath?: string; }; 🤖
+如果文档库有根目录选择的功能，需要设置添加一个字段basePath点击查看根目录功能
+2. 创建 Hook 文件 link每个第三方文档库都会采用 Hook 的方式来实现一套 API 接口的维护，Hook 里包含 4 个函数需要完成。
+在FastGPT\packages\service\core\dataset\apiDataset\下创建一个文档库的文件夹，然后在文件夹下创建一个api.ts文件 在api.ts文件中，需要完成 4 个函数的定义，分别是： listFiles：获取文件列表 getFileContent：获取文件内容/文件链接 getFileDetail：获取文件详情信息 getFilePreviewUrl：获取原文预览地址 3. 添加知识库类型 link在FastGPT\packages\global\core\dataset\type.d.ts文件中，导入自己创建的知识库类型。
+4. 添加知识库数据获取 link在FastGPT\packages\global\core\dataset\apiDataset\utils.</description></item><item><title>模板导入</title><link>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/guide/knowledge_base/template/</guid><description>背景 linkFastGPT 提供了模板导入功能，让用户可以通过预设的 CSV 模板格式批量导入问答对数据。这种方式特别适合已经有结构化问答数据的用户，可以快速将数据导入到知识库中。
+模板结构说明 link模板采用 CSV 格式，包含以下列：
+q: 问题列，存放用户可能提出的问题 a: 答案列，存放对应问题的标准答案 indexes: 索引列，用于存放与该问题相关的索引 示例数据 link q,a,indexes &amp;#34;你是谁呀？&amp;#34;,&amp;#34;我呀，是 AI 小助手哟，专门在这儿随时准备着，陪你交流、为你答疑解惑，不管是学习上的知识探讨，生活里的小疑问，还是创意灵感的碰撞，我都能尽力参与，用我的 &amp;#34;知识大脑&amp;#34; 给你提供帮助和陪伴呢，就盼着能成为你互动交流、探索世界的好伙伴呀 。&amp;#34;,&amp;#34;1. 你是什么？\n2. 你能做什么？\n3. 你可以解答哪些方面的疑问？\n4. 你希望成为什么样的伙伴？\n5. 你如何提供帮助？&amp;#34; &amp;#34;你是什么？&amp;#34;,&amp;#34;我是 AI 小助手，专门随时准备陪用户交流、为用户答疑解惑，能参与学习上的知识探讨、生活里的小疑问以及创意灵感的碰撞，用 &amp;#34;知识大脑&amp;#34; 提供帮助和陪伴，希望成为用户互动交流、探索世界的好伙伴。&amp;#34;,&amp;#34;你是什么？&amp;#34; &amp;#34;你能做什么？&amp;#34;,&amp;#34;能陪用户交流、为用户答疑解惑，参与学习上的知识探讨、生活里的小疑问以及创意灵感的碰撞，用 &amp;#34;知识大脑&amp;#34; 提供帮助和陪伴。&amp;#34;,&amp;#34;你能做什么？&amp;#34; 使用说明 link1. 打开知识库，点击导入，选择模版导入 link 2. 下载模板 link点击下载 CSV 模版，其中存在两个模式的内容
+常规模式的数据模版 link 对应 CSV 格式为
+常规模式下，q为内容，a为空，indexes可多个
+问答对的数据模版 link 对应CSV格式为
+问答对模式下，q为问题，a为答案，indexes即为索引部分
+3. 填写数据 link按照模板格式填写你的问答数据：
+每一行代表一个内容或者一个问答对 问题(q)始终不为空 在一行内，索引部分可往后继续添加 4. 导入限制 link 仅支持 CSV 格式文件 单个文件大小限制为 100MB 必须严格按照模板格式填写，否则可能导入失败 每次只能导入一个文件 成功导入后如下：</description></item></channel></rss>

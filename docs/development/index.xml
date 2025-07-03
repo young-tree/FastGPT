@@ -20,8 +20,9 @@ projects 目录下为 FastGPT 应用代码。其中 app 为 FastGPT 核心应用
 收费 linkSealos 采用按量计费的方式，也就是申请了多少 cpu、内存、磁盘，就按该申请量进行计费。具体的计费标准，可以打开sealos控制面板中的费用中心进行查看。
 Sealos 使用 link简介 linkFastGPT 商业版共包含了2个应用（fastgpt, fastgpt-plus）和2个数据库，使用多 Api Key 时候需要安装 OneAPI（一个应用和一个数据库），总计3个应用和3个数据库。</description></item><item><title>Docker Compose 快速部署</title><link>https://doc.tryfastgpt.ai/docs/development/docker/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://doc.tryfastgpt.ai/docs/development/docker/</guid><description>前置知识 link 基础的网络知识：端口，防火墙…… Docker 和 Docker Compose 基础知识 大模型相关接口和参数 RAG 相关知识：向量模型，向量数据库，向量检索 部署架构图 link 🤖
 MongoDB：用于存储除了向量外的各类数据
-PostgreSQL/Milvus：存储向量数据
-OneAPI: 聚合各类 AI API，支持多模型调用 （任何模型问题，先自行通过 OneAPI 测试校验）
+MinIO: 用于存储插件的文件数据
+PostgreSQL/Milvus/Oceanbase：存储向量数据
+AIProxy: 聚合各类 AI API，支持多模型调用
 推荐配置 linkPgVector版本 link非常轻量，适合知识库索引量在 5000 万以下。
 环境 最低配置（单节点） 推荐配置 测试（可以把计算进程设置少一些） 2c4g 2c8g 100w 组向量 4c8g 50GB 4c16g 50GB 500w 组向量 8c32g 200GB 16c64g 200GB Milvus版本 link对于亿级以上向量性能更优秀。
 点击查看 Milvus 官方推荐配置
@@ -38,4 +39,5 @@ OneAPI 错误 link带有requestId的，都是 OneAPI 提示错误，大部分都
 数据库3306端口被占用了，启动服务失败 link 把端口映射改成 3307 之类的，例如 3307:3306。
 本地部署的限制 link具体内容参考https://fael3z0zfze.feishu.cn/wiki/OFpAw8XzAi36Guk8dfucrCKUnjg。
 能否纯本地运行 link可以。需要准备好向量模型和LLM模型。
-其他模型没法进行问题分类/内容提取 link 看日志。如果提示 JSON invalid，not support tool 之类的，说明该模型不支持工具调用或函数调用，需要设置toolChoice=false和functionCall=false，就会默认走提示词模式。目前内置提示词仅针对了商业模型API进行测试。问题分类基本可用，内容提取不太行。 如果已经配置正常，并且没有错误日志，则说明可能提示词不太适合该模型，可以通过修改customCQPrompt来自定义提示词。 页面崩溃 link 关闭翻译 检查配置文件是否正常加载，如果没有正常加载会导致缺失系统信息，在某些操作下会导致空指针。 95%情况是配置文件不对。会提示 xxx undefined 提示URI malformed，请 Issue 反馈具体操作和页面，这是由于特殊字符串编码解析报错。 某些api不兼容问题（较少） 开启内容补全后，响应速度变慢 link 问题补全需要经过一轮AI生成。 会进行3~5轮的查询，如果数据库性能不足，会有明显影响。 页面中可以正常回复，API 报错 link页面中是用 stream=true 模式，所以API也需要设置 stream=true 来进行测试。部分模型接口（国产居多）非 Stream 的兼容有点垃圾。 和上一个问题一样，curl 测试。</description></item></channel></rss>
+其他模型没法进行内容提取 link看日志。如果提示 JSON invalid，not support tool 之类的，说明该模型不支持工具调用或函数调用，需要设置toolChoice=false和functionCall=false，就会默认走提示词模式。目前内置提示词仅针对了商业模型API进行测试。问题分类基本可用，内容提取不太行。
+页面崩溃 link 关闭翻译 检查配置文件是否正常加载，如果没有正常加载会导致缺失系统信息，在某些操作下会导致空指针。 95%情况是配置文件不对。会提示 xxx undefined 提示URI malformed，请 Issue 反馈具体操作和页面，这是由于特殊字符串编码解析报错。 某些api不兼容问题（较少） 开启内容补全后，响应速度变慢 link 问题补全需要经过一轮AI生成。 会进行3~5轮的查询，如果数据库性能不足，会有明显影响。 页面中可以正常回复，API 报错 link页面中是用 stream=true 模式，所以API也需要设置 stream=true 来进行测试。部分模型接口（国产居多）非 Stream 的兼容有点垃圾。 和上一个问题一样，curl 测试。</description></item></channel></rss>
